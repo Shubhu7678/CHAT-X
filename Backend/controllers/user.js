@@ -2,7 +2,6 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 export const signUp = async (req, res) => { 
 
     try {
@@ -38,9 +37,9 @@ export const signUp = async (req, res) => {
             })
         }
 
-        const hashedPassword = bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        profileImage: `https://ui-avatars.com/api/?name=${firstName}+${lastName}`;
+        const profileImage = `https://ui-avatars.com/api/?name=${firstName}+${lastName}`;
         
         const user = await User.create({
 
@@ -122,6 +121,32 @@ export const login = async (req, res) => {
             token,
             data: user
         });
+
+    } catch (error) { 
+
+        return res.status(500).json({
+
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        })
+    }
+}
+
+export const getAllUsers = async (req, res) => { 
+
+    try {
+        
+        const currentUserId = req.user._id;
+        const allUsers = await User.find({ _id: { $ne: currentUserId } });
+
+        res.status(200).json({
+
+            success: true,
+            message: "Users fetched successfully",
+            data: allUsers
+        })
+
 
     } catch (error) { 
 

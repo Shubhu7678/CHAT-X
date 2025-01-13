@@ -1,33 +1,33 @@
 
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { signup } from '../services/operations/authApis';
 
 const Signup = () => {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  
+
   const navigate = useNavigate();
-  const onSubmit = async(data) => { 
+  const onSubmit = async (data) => {
 
     try {
-      
+
       const result = await signup(data);
-      if (result) { 
+      if (result) {
 
         reset();
         toast.success('Signup successful');
         navigate("/login");
       }
-        
-    } catch (error) { 
-           
+
+    } catch (error) {
+
       console.log("Error occured in Signup", error);
 
     }
-      
+
   }
 
   return (
@@ -72,48 +72,41 @@ const Signup = () => {
             />
             {errors.email && <span className="text-red-500">Email is required</span>}
           </div>
-          <div className="mb-2">
-            <div>
-              <label className="block text-gray-700" htmlFor="password">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder='*******'
-                className="w-full px-3 py-2 border"
-                {...register('password', { required: true })}
-              />
-              {errors.password && <span className="text-red-500">Password is required</span>}
-            </div>
-            <div>
-              <label className="block text-gray-700" htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder='*******'
-                className="w-full px-3 py-2 border"
-                {...register('confirmPassword', { required: true })}
-              />
-              {errors.confirmPassword && <span className="text-red-500">Confirm Password is required</span>}
-            </div>
 
+          <div className="mb-2">
+            <label className="block text-gray-700" htmlFor="password">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder='*******'
+              className="w-full px-3 py-2 border"
+              {...register('password', { required: true })}
+            />
+            {errors.password && <span className="text-red-500">Password is required</span>}
           </div>
-          <div className="mb-4 flex items-center justify-center">
-            <label className="flex  items-center">
-              <input type="checkbox" className="form-checkbox" />
-              <span className="ml-2 text-gray-700">Remember Me</span>
-            </label>
-            <a href="#" className="text-teal-600 ml-2">
-              Forgot password?
-            </a>
+          <div className="mb-4">
+            <label className="block text-gray-700" htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder='*******'
+              className="w-full px-3 py-2 border"
+              {...register('confirmPassword', { required: true })}
+            />
+            {errors.confirmPassword && <span className="text-red-500">Confirm Password is required</span>}
           </div>
           <div className="mb-4">
             <button
               type="submit"
               className="w-full py-2 bg-teal-600 text-white">
-              Login
+              Sign up
             </button>
           </div>
         </form>
+        <div>
+           <span>Have any account ? </span>
+        <NavLink to={'/login'} className="underline text-blue-700" >Login</NavLink>
+        </div>
       </div>
     </div>
   )
