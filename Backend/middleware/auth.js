@@ -14,7 +14,7 @@ export const auth = (req, res, next) => {
             return res.status(401).json({
 
                 success: false, 
-                message: "User is not authorized",
+                message: "User is not authorized!",
             });
         }
 

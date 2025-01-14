@@ -4,9 +4,20 @@ import connectDB from './config/db.js';
 import userRoutes from './routes/user.js';
 import messageRoutes from './routes/message.js';
 import cors from 'cors';
+import { Server } from 'socket.io';
+import {createServer} from 'http';
 
 dotenv.config();
 const app = express();
+
+const server = createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    }
+})
 
 const port = process.env.PORT || 4000;
 
@@ -18,9 +29,33 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api/v1/user/', userRoutes);
-app.use('api/v1/message/', messageRoutes)
+app.use('/api/v1/message/', messageRoutes);
 
-app.listen(port, () => {  
+io.on('connection', (socket) => {
+    
+    console.log('New user connected', socket.id);
+
+    socket.on('userName', (name) => { 
+
+        console.log('User : ', name);
+    })
+
+    socket.on('send-new-message', (message) => { 
+
+        console.log('Message : ', message);
+        io.emit('new-message', message);
+    })
+    socket.on('disconnect', () => {
+
+        console.log('User disconnected', socket.id);
+    });
+
+})
+
+
+
+
+server.listen(port, () => {  
     console.log(`Server listening on port ${port}`);
 });
 
