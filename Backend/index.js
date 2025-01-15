@@ -35,14 +35,8 @@ io.on('connection', (socket) => {
     
     console.log('New user connected', socket.id);
 
-    socket.on('userName', (name) => { 
-
-        console.log('User : ', name);
-    })
-
     socket.on('send-new-message', (message) => { 
 
-        console.log('Message : ', message);
         io.emit('new-message', message);
     })
     socket.on('disconnect', () => {

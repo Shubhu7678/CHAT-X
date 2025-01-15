@@ -8,7 +8,6 @@ import { setMessages } from "../../../../slices/conversationSlice";
 import { sendMessage } from "../../../../services/operations/messageApis";
 import { useDispatch } from "react-redux"
 import { io } from 'socket.io-client'
-import { useEffect } from "react";
 
 const socket = io("http://localhost:4000");
 
@@ -19,13 +18,6 @@ const SendMessage = () => {
     const { token } = useSelector((state) => state.auth);
     const {user} = useSelector((state) => state.profile)
     const dispatch = useDispatch();
-
-    
-    useEffect(() => { 
-        
-        socket.emit('userName', user.firstName);
-
-    },[user])
       
     socket.on('new-message', (message) => {
         dispatch(setMessages([...messages, message]));
@@ -33,13 +25,19 @@ const SendMessage = () => {
 
     const onSubmit = async(data) => {
         const receiverId = selectedConversation?._id;
-        socket.emit('send-new-message', data.newSendMessage);
+        socket.emit('send-new-message',
+            {
+                senderId: user?._id,
+                receiverId: receiverId,
+                message: data.newSendMessage
+             }
+        );
 
         const result = await sendMessage(data, token, receiverId);
         if (result) { 
             
             reset();
-            dispatch(setMessages([...messages, result])); 
+            // dispatch(setMessages([...messages, result])); 
         }
     }
     return (
